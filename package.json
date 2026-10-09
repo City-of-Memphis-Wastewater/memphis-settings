@@ -1,6 +1,6 @@
 {
   "name": "memphis-settings",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Manage encrypted secrets, plaintext configs, and .env settings locally.",
   "license": "ISC",
   "type": "module",
