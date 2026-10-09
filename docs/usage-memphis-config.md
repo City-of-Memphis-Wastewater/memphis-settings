@@ -23,7 +23,7 @@ This sets up the config file reference for `~/.my-package/.memphis-config/values
 ## Default directory
 
 ```ts
-import { MemphisConfig } from 'memphis-config';
+import { MemphisConfig } from "memphis-config";
 
 const config = new MemphisConfig();
 ```

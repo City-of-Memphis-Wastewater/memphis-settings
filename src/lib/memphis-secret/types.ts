@@ -3,14 +3,14 @@
 export type SecretValue = string;
 
 export interface MemphisSecretOptions {
-	appDir?: string;
+  appDir?: string;
 }
 
 export interface MemphisSecretSetOptions {
-	overwrite?: boolean;
+  overwrite?: boolean;
 }
 
 export interface MemphisSecretItem {
-	service: string;
-	item: string;
+  service: string;
+  item: string;
 }

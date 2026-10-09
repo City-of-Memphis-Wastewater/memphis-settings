@@ -13,7 +13,10 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "tsx tests/memphis-secret.test.ts"
+    "test": "tsx tests/memphis-secret.test.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run format:check && npm run build && npm test"
   },
   "exports": {
     ".": {
@@ -26,6 +29,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.19.1",
+    "prettier": "^3.9.9",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3"
   }

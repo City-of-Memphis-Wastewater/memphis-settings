@@ -23,7 +23,7 @@ This sets up the secret file reference for `~/.my-package/.memphis-secret/vault.
 ## Default directory
 
 ```ts
-import { MemphisSecret } from 'memphis-secret';
+import { MemphisSecret } from "memphis-secret";
 
 const secret = new MemphisSecret();
 ```

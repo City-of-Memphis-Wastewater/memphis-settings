@@ -22,7 +22,7 @@ This sets us the env file reference for `./.env` in the root or the current work
 This has the same outcome as:
 
 ```ts
-import { MemphisEnv } from 'memphis-env';
+import { MemphisEnv } from "memphis-env";
 
 const env = new MemphisEnv();
 ```
