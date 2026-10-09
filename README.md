@@ -1,6 +1,6 @@
 # memphis-settings
 
-Manage encrypted secrets, plaintext configs, and .env settings locally.
+Manage encrypted secrets, plain-text configs, and .env settings locally.
 
 ## memphis-secret
 
