@@ -16,7 +16,9 @@
     "test": "tsx tests/memphis-secret.test.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run format:check && npm run build && npm test"
+    "check": "npm run format:check && npm run build && npm test",
+    "lint": "prettier --check .",
+    "memphis-settings": "tsx bin/memphis-settings.js"
   },
   "exports": {
     ".": {
