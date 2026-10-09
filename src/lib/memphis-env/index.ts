@@ -1,7 +1,6 @@
 // src/lib/memphis-env/index.ts
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-
 import path from "node:path";
 
 import type {
@@ -53,17 +52,16 @@ export class MemphisEnv {
   }
 
   public value(key: string): EnvValue | undefined {
-    return this.values[key];
+    return Object.hasOwn(this.values, key)
+      ? this.values[key]
+      : undefined;
   }
 
-  public requiredValue(key: string): string {
-    const value = this.value(key);
-
-    if (value === undefined) {
-      throw new Error(`Required environment variable is missing: ${key}`);
-    }
-
-    return String(value);
+  public list(): Array<{ key: string; value: EnvValue }> {
+    return Object.entries(this.values).map(([key, value]) => ({
+      key,
+      value,
+    }));
   }
 
   public setValue(
@@ -71,18 +69,46 @@ export class MemphisEnv {
     value: EnvValue,
     options: MemphisEnvSetOptions = {},
   ): void {
+    this.validateKey(key);
+
     if (Object.hasOwn(this.values, key) && options.overwrite === false) {
       return;
     }
 
     this.values[key] = value;
+    this.save();
+  }
 
+  public deleteValue(key: string): boolean {
+    this.validateKey(key);
+
+    if (!Object.hasOwn(this.values, key)) {
+      return false;
+    }
+
+    delete this.values[key];
+    this.save();
+
+    return true;
+  }
+
+  private validateKey(key: string): void {
+    if (
+      typeof key !== "string" ||
+      key.trim() === "" ||
+      /[\r\n=]/.test(key)
+    ) {
+      throw new Error("[memphis-env] Invalid environment variable name.");
+    }
+  }
+
+  private save(): void {
     const envDir = path.dirname(this.envFile);
 
     mkdirSync(envDir, { recursive: true });
 
     const contents = Object.entries(this.values)
-      .map(([name, envValue]) => `${name}=${envValue}`)
+      .map(([name, value]) => `${name}=${value}`)
       .join("\n");
 
     writeFileSync(this.envFile, contents + "\n", "utf8");
