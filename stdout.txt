@@ -1,0 +1,1 @@
+[memphis-secret] Vault does not exist: /data/data/com.termux/files/home/.memphis-secret/vault.db

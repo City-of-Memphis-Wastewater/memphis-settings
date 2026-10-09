@@ -1,334 +1,391 @@
-// src/lib/cli/index.ts
-
 import { createInterface } from "node:readline/promises";
-import { stdin, stdout } from "node:process";
+import process from "node:process";
 
 import { MemphisConfig } from "../memphis-config/index.ts";
 import { MemphisEnv } from "../memphis-env/index.ts";
 import { MemphisSecret } from "../memphis-secret/index.ts";
 
-type Manager = "config" | "secret" | "env";
-type Action = "list" | "get" | "set" | "delete";
-
-interface ParsedArgs {
+type ParsedArgs = {
   appDir?: string;
   emit: boolean;
-  positional: string[];
+  args: string[];
+};
+
+function writeOut(value: string): void {
+  process.stdout.write(`${value}\n`);
 }
 
-function parseArgs(args: string[]): ParsedArgs {
-  const result: ParsedArgs = {
-    emit: false,
-    positional: [],
-  };
+function writeError(value: string): void {
+  process.stderr.write(`${value}\n`);
+}
 
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
+function writeJson(value: unknown): void {
+  writeOut(JSON.stringify(value, null, 2));
+}
+
+function printHelp(): void {
+  writeOut(`memphis-settings
+
+Usage:
+memphis-settings [--app-dir PATH] <manager> <command> [arguments]
+
+Managers:
+config    Manage plaintext configuration
+secret    Manage encrypted credentials
+env       Manage .env variables
+
+Commands:
+list
+get KEY
+set KEY VALUE
+delete KEY
+
+Config commands:
+config list
+config get SERVICE ITEM
+config set SERVICE ITEM VALUE
+config delete SERVICE ITEM
+
+Secret commands:
+secret init
+secret list
+secret get SERVICE ITEM [--emit]
+secret set SERVICE ITEM
+secret delete SERVICE ITEM
+
+Env commands:
+env list
+env get KEY
+env set KEY VALUE
+env delete KEY
+
+Options:
+--app-dir PATH   Select the application directory
+--emit, -e       Emit a secret value to stdout
+--help, -h       Show help
+
+Examples:
+memphis-settings config list
+memphis-settings config get eds host
+memphis-settings config set eds host 172.19.4.127
+memphis-settings secret init
+memphis-settings secret get eds password
+memphis-settings secret get eds password --emit
+memphis-settings secret set eds password
+memphis-settings env list
+memphis-settings env set EDS_HOST 172.19.4.127
+memphis-settings --app-dir ./plantmap config list`);
+}
+
+function parseArgs(input: string[]): ParsedArgs {
+  const args: string[] = [];
+  let appDir: string | undefined;
+  let emit = false;
+
+  for (let i = 0; i < input.length; i++) {
+    const arg = input[i];
 
     if (arg === "--app-dir") {
-      const value = args[++i];
+      const value = input[++i];
 
-      if (!value || value.startsWith("-")) {
+      if (!value || value.startsWith("--")) {
         throw new Error("--app-dir requires a directory path.");
       }
 
-      result.appDir = value;
-      continue;
-    }
-
-    if (arg.startsWith("--app-dir=")) {
-      result.appDir = arg.slice("--app-dir=".length);
-
-      if (!result.appDir) {
-        throw new Error("--app-dir requires a directory path.");
-      }
-
+      appDir = value;
       continue;
     }
 
     if (arg === "--emit" || arg === "-e") {
-      result.emit = true;
+      emit = true;
       continue;
     }
 
-    result.positional.push(arg);
+    args.push(arg);
   }
 
-  return result;
+  return { appDir, emit, args };
 }
 
-function writeJson(value: unknown): void {
-  console.log(JSON.stringify(value, null, 2));
+function parseConfigValue(raw: string): unknown {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return raw;
+  }
 }
 
-function writeError(message: string): void {
-  console.error(message);
-}
-
-function requireArgs(
-  args: string[],
-  count: number,
-  usage: string,
-): void {
-  if (args.length !== count) {
+function requireArguments(args: string[], count: number, usage: string): void {
+  if (args.length < count) {
     throw new Error(`Usage: ${usage}`);
   }
 }
 
-function printHelp(): void {
-  writeError(`
-memphis-settings
+async function runConfig(config: MemphisConfig, args: string[]): Promise<void> {
+  const [command, ...rest] = args;
 
-Usage:
-  memphis-settings [--app-dir PATH] <manager> <command> [arguments]
-
-Managers:
-  config    Manage plaintext configuration
-  secret    Manage encrypted credentials
-  env       Manage .env variables
-
-Commands:
-  list
-  get KEY
-  set KEY VALUE
-  delete KEY
-
-Config and secret keys use SERVICE ITEM.
-Env keys use a single variable name.
-
-Options:
-  --app-dir PATH   Select the application directory
-  --emit, -e       Emit a secret value to stdout
-
-Examples:
-  memphis-settings config list
-  memphis-settings config get eds host
-  memphis-settings config set eds host 172.19.4.127
-  memphis-settings secret get eds password --emit
-  memphis-settings secret set eds password
-  memphis-settings env list
-  memphis-settings env set EDS_HOST 172.19.4.127
-  memphis-settings --app-dir ./plantmap config list
-`);
-}
-
-async function promptSecret(): Promise<string> {
-  if (!stdin.isTTY || !stdout.isTTY) {
-    throw new Error(
-      "Secret input requires an interactive terminal. " +
-        "Use an interactive terminal to avoid exposing secrets in arguments.",
-    );
-  }
-
-  const terminal = createInterface({
-    input: stdin,
-    output: stdout,
-    terminal: true,
-  });
-
-  try {
-    const answer = await terminal.question("Secret value: ");
-    return answer;
-  } finally {
-    terminal.close();
-  }
-}
-
-export async function runCli(args: string[]): Promise<void> {
-  try {
-    const parsed = parseArgs(args);
-    const [managerArg, actionArg, ...rest] = parsed.positional;
-
-    if (!managerArg || managerArg === "help" || managerArg === "--help") {
-      printHelp();
+  switch (command) {
+    case "list": {
+      writeJson(config.list());
       return;
     }
 
-    if (
-      managerArg !== "config" &&
-      managerArg !== "secret" &&
-      managerArg !== "env"
-    ) {
-      throw new Error(`Unknown manager: ${managerArg}`);
-    }
+    case "get": {
+      requireArguments(rest, 2, "memphis-settings config get SERVICE ITEM");
 
-    if (actionArg === "--help" || actionArg === "help") {
-      printHelp();
-      return;
-    }
-
-    if (
-      actionArg !== "list" &&
-      actionArg !== "get" &&
-      actionArg !== "set" &&
-      actionArg !== "delete"
-    ) {
-      throw new Error(`Unknown command: ${actionArg ?? "(missing)"}`);
-    }
-
-    const manager: Manager = managerArg;
-    const action: Action = actionArg;
-
-    if (parsed.emit && manager !== "secret") {
-      throw new Error("--emit is only supported by the secret manager.");
-    }
-
-    const appDir = parsed.appDir;
-
-    if (manager === "config") {
-      const config = new MemphisConfig({ appDir });
-
-      if (action === "list") {
-        requireArgs(rest, 0, "memphis-settings config list");
-        writeJson(config.list());
-        return;
-      }
-
-      if (action === "get") {
-        requireArgs(rest, 2, "memphis-settings config get SERVICE ITEM");
-
-        const value = config.value(rest[0], rest[1]);
-
-        if (value === undefined) {
-          throw new Error(`Configuration not found: ${rest[0]}.${rest[1]}`);
-        }
-
-        if (typeof value === "string") {
-          console.log(value);
-        } else {
-          writeJson(value);
-        }
-
-        return;
-      }
-
-      if (action === "set") {
-        requireArgs(
-          rest,
-          3,
-          "memphis-settings config set SERVICE ITEM VALUE",
-        );
-
-        const [service, item, ...valueParts] = rest;
-        const rawValue = valueParts.join(" ");
-
-        let value: unknown;
-
-        try {
-          value = JSON.parse(rawValue);
-        } catch {
-          value = rawValue;
-        }
-
-        config.setValue(service, item, value as never, {
-          overwrite: true,
-        });
-
-        return;
-      }
-
-      requireArgs(rest, 2, "memphis-settings config delete SERVICE ITEM");
-
-      if (!config.deleteValue(rest[0], rest[1])) {
-        throw new Error(`Configuration not found: ${rest[0]}.${rest[1]}`);
-      }
-
-      return;
-    }
-
-    if (manager === "secret") {
-      const secret = new MemphisSecret({ appDir });
-
-      if (action === "list") {
-        requireArgs(rest, 0, "memphis-settings secret list");
-        writeJson(secret.list());
-        return;
-      }
-
-      if (action === "get") {
-        requireArgs(rest, 2, "memphis-settings secret get SERVICE ITEM");
-
-        const [service, item] = rest;
-        const value = secret.value(service, item);
-
-        if (value === undefined) {
-          throw new Error(`Secret not found: ${service}/${item}`);
-        }
-
-        if (parsed.emit) {
-          console.log(value);
-        } else {
-          writeError(`Secret exists: ${service}/${item}`);
-        }
-
-        return;
-      }
-
-      if (action === "set") {
-        requireArgs(rest, 2, "memphis-settings secret set SERVICE ITEM");
-
-        const [service, item] = rest;
-        const value = await promptSecret();
-
-        secret.setValue(service, item, value, {
-          overwrite: true,
-        });
-
-        writeError(`Secret stored: ${service}/${item}`);
-        return;
-      }
-
-      requireArgs(rest, 2, "memphis-settings secret delete SERVICE ITEM");
-
-      if (!secret.remove(rest[0], rest[1])) {
-        throw new Error(`Secret not found: ${rest[0]}/${rest[1]}`);
-      }
-
-      writeError(`Secret deleted: ${rest[0]}/${rest[1]}`);
-      return;
-    }
-
-    const env = new MemphisEnv({ appDir });
-
-    if (action === "list") {
-      requireArgs(rest, 0, "memphis-settings env list");
-      writeJson(env.list());
-      return;
-    }
-
-    if (action === "get") {
-      requireArgs(rest, 1, "memphis-settings env get KEY");
-
-      const value = env.value(rest[0]);
+      const [service, item] = rest;
+      const value = config.value(service, item);
 
       if (value === undefined) {
-        throw new Error(`Environment variable not found: ${rest[0]}`);
+        throw new Error(`Configuration not found: ${service}/${item}`);
       }
 
-      console.log(value);
+      writeOut(typeof value === "string" ? value : JSON.stringify(value));
       return;
     }
 
-    if (action === "set") {
-      requireArgs(rest, 2, "memphis-settings env set KEY VALUE");
+    case "set": {
+      requireArguments(
+        rest,
+        3,
+        "memphis-settings config set SERVICE ITEM VALUE",
+      );
 
-      env.setValue(rest[0], rest[1], {
+      const [service, item, ...valueParts] = rest;
+      const value = parseConfigValue(valueParts.join(" "));
+
+      config.setValue(service, item, value as never, {
         overwrite: true,
       });
 
       return;
     }
 
-    requireArgs(rest, 1, "memphis-settings env delete KEY");
+    case "delete": {
+      requireArguments(rest, 2, "memphis-settings config delete SERVICE ITEM");
 
-    if (!env.deleteValue(rest[0])) {
-      throw new Error(`Environment variable not found: ${rest[0]}`);
+      const [service, item] = rest;
+
+      if (!config.deleteValue(service, item)) {
+        throw new Error(`Configuration not found: ${service}/${item}`);
+      }
+
+      writeError(`Configuration deleted: ${service}/${item}`);
+      return;
+    }
+
+    default:
+      throw new Error(
+        "Unknown config command. Use config list|get|set|delete.",
+      );
+  }
+}
+
+async function runSecret(
+  secret: MemphisSecret,
+  args: string[],
+  emit: boolean,
+): Promise<void> {
+  const [command, ...rest] = args;
+
+  switch (command) {
+    case "init": {
+      if (rest.length > 0) {
+        throw new Error("Usage: memphis-settings secret init");
+      }
+
+      if (secret.isInitialized()) {
+        writeError("Secret vault is already initialized.");
+        return;
+      }
+
+      secret.initializeVault();
+      writeError("Secret vault initialized.");
+      return;
+    }
+
+    case "list": {
+      if (emit) {
+        throw new Error("--emit is only supported by secret get.");
+      }
+
+      writeJson(secret.list());
+      return;
+    }
+
+    case "get": {
+      requireArguments(
+        rest,
+        2,
+        "memphis-settings secret get SERVICE ITEM [--emit]",
+      );
+
+      const [service, item] = rest;
+      const value = secret.value(service, item);
+
+      if (value === undefined) {
+        throw new Error(`Secret not found: ${service}/${item}`);
+      }
+
+      if (emit) {
+        writeOut(value);
+      } else {
+        writeError(`Credential found for ${service}/${item}`);
+        writeError("(use --emit to emit value)");
+      }
+
+      return;
+    }
+
+    case "set": {
+      requireArguments(rest, 2, "memphis-settings secret set SERVICE ITEM");
+
+      if (rest.length > 2) {
+        throw new Error(
+          "Secret values must be entered at the prompt, not as command-line arguments.",
+        );
+      }
+
+      if (emit) {
+        throw new Error("--emit cannot be used with secret set.");
+      }
+
+      const [service, item] = rest;
+      const prompt = createInterface({
+        input: process.stdin,
+        output: process.stderr,
+      });
+
+      try {
+        const value = await prompt.question(
+          `Secret value for ${service}/${item}: `,
+        );
+
+        secret.setValue(service, item, value);
+        writeError(`Credential stored: ${service}/${item}`);
+      } finally {
+        prompt.close();
+      }
+
+      return;
+    }
+
+    case "delete": {
+      requireArguments(rest, 2, "memphis-settings secret delete SERVICE ITEM");
+
+      if (emit) {
+        throw new Error("--emit cannot be used with secret delete.");
+      }
+
+      const [service, item] = rest;
+
+      if (!secret.remove(service, item)) {
+        throw new Error(`Secret not found: ${service}/${item}`);
+      }
+
+      writeError(`Credential removed: ${service}/${item}`);
+      return;
+    }
+
+    default:
+      throw new Error(
+        "Unknown secret command. Use secret init|list|get|set|delete.",
+      );
+  }
+}
+
+async function runEnv(env: MemphisEnv, args: string[]): Promise<void> {
+  const [command, ...rest] = args;
+
+  switch (command) {
+    case "list": {
+      writeJson(env.list());
+      return;
+    }
+
+    case "get": {
+      requireArguments(rest, 1, "memphis-settings env get KEY");
+
+      const [key] = rest;
+      const value = env.value(key);
+
+      if (value === undefined) {
+        throw new Error(`Environment variable not found: ${key}`);
+      }
+
+      writeOut(value);
+      return;
+    }
+
+    case "set": {
+      requireArguments(rest, 2, "memphis-settings env set KEY VALUE");
+
+      const [key, ...valueParts] = rest;
+      env.setValue(key, valueParts.join(" "), { overwrite: true });
+
+      writeError(`Environment variable stored: ${key}`);
+      return;
+    }
+
+    case "delete": {
+      requireArguments(rest, 1, "memphis-settings env delete KEY");
+
+      const [key] = rest;
+
+      if (!env.deleteValue(key)) {
+        throw new Error(`Environment variable not found: ${key}`);
+      }
+
+      writeError(`Environment variable deleted: ${key}`);
+      return;
+    }
+
+    default:
+      throw new Error("Unknown env command. Use env list|get|set|delete.");
+  }
+}
+
+export async function runCli(input: string[]): Promise<void> {
+  try {
+    const parsed = parseArgs(input);
+    const { appDir, emit, args } = parsed;
+
+    if (args.length === 0 || args[0] === "--help" || args[0] === "-h") {
+      printHelp();
+      return;
+    }
+
+    /*
+     * Existing manager implementations use console.log for diagnostic
+     * messages. In CLI mode, route those messages to stderr so stdout
+     * remains suitable for JSON, shell pipelines, and --emit.
+     */
+    console.log = console.error.bind(console);
+
+    const [manager, ...managerArgs] = args;
+
+    switch (manager) {
+      case "config":
+        await runConfig(new MemphisConfig({ appDir }), managerArgs);
+        return;
+
+      case "secret":
+        await runSecret(new MemphisSecret({ appDir }), managerArgs, emit);
+        return;
+
+      case "env":
+        await runEnv(new MemphisEnv({ appDir }), managerArgs);
+        return;
+
+      default:
+        throw new Error(
+          `Unknown manager: ${manager}. Use config, secret, or env.`,
+        );
     }
   } catch (error) {
-    writeError(
-      error instanceof Error ? error.message : String(error),
-    );
+    const message = error instanceof Error ? error.message : String(error);
 
+    writeError(message);
     process.exitCode = 1;
   }
 }

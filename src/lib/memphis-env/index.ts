@@ -52,9 +52,7 @@ export class MemphisEnv {
   }
 
   public value(key: string): EnvValue | undefined {
-    return Object.hasOwn(this.values, key)
-      ? this.values[key]
-      : undefined;
+    return Object.hasOwn(this.values, key) ? this.values[key] : undefined;
   }
 
   public list(): Array<{ key: string; value: EnvValue }> {
@@ -93,11 +91,7 @@ export class MemphisEnv {
   }
 
   private validateKey(key: string): void {
-    if (
-      typeof key !== "string" ||
-      key.trim() === "" ||
-      /[\r\n=]/.test(key)
-    ) {
+    if (typeof key !== "string" || key.trim() === "" || /[\r\n=]/.test(key)) {
       throw new Error("[memphis-env] Invalid environment variable name.");
     }
   }
