@@ -12,7 +12,7 @@ Two-key plaintext local value store.
 
 ## memphis-env
 
-Single key .env file CRUD.
+CRUD for .env file in package root.
 
 ## Source code
 
