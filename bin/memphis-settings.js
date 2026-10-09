@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-const { runCli } = await import("../src/lib/cli/index.ts");
+import { runCli } from "../dist/lib/cli/index.js";
 
 await runCli(process.argv.slice(2));
