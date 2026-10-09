@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
 import path from 'node:path';
 
-import type { EnvValue, MemphisEnvOptions, MemphisEnvSetOptions } from './types';
+import type { EnvValue, MemphisEnvOptions, MemphisEnvSetOptions } from './types.ts';
 
 export class MemphisEnv {
 	private readonly envFile: string;
