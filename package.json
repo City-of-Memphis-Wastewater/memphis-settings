@@ -3,14 +3,29 @@
   "version": "0.0.1",
   "description": "Manage encrypted secrets, plaintext configs, and .env settings locally.",
   "license": "ISC",
-  "author": "",
-  "type": "commonjs",
-  "main": "index.js",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "bin",
+    "docs"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p tsconfig.json",
+    "test": "tsx tests/memphis-secret.test.ts"
   },
   "exports": {
-    ".": "./dist/index.js",
-    "./bootstrap": "./dist/bootstrap.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
+  },
+  "bin": {
+    "memphis-settings": "./bin/memphis-settings.js"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3",
+    "tsx": "^4.23.15"
+  }
 }
