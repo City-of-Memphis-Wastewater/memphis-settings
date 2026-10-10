@@ -61,7 +61,7 @@ env set KEY VALUE
 env delete KEY
 
 Options:
---app-dir PATH   Select the application directory for config and secret
+--app-dir PATH   Select the application directory for nested config and secret
 --dir PATH       Select the directory containing .env
 --emit, -e       Emit a secret value to stdout
 --help, -h       Show help
