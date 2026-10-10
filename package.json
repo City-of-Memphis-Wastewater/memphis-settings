@@ -9,7 +9,13 @@
     "secret-management",
     "configuration",
     "credentials",
-    "environment"
+    "environment",
+    "local",
+    "disk",
+    "commit-safety",
+    "untracked",
+    "app-dir",
+    "dworshak"
   ]
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
