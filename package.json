@@ -4,6 +4,13 @@
   "description": "Manage encrypted secrets, plaintext configs, and .env settings locally.",
   "license": "ISC",
   "type": "module",
+  "keywords": [
+    "credential-management",
+    "secret-management",
+    "configuration",
+    "credentials",
+    "environment"
+  ]
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
