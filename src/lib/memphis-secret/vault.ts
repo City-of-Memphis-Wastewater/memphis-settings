@@ -24,7 +24,7 @@ function createVault(appDir?: string): DatabaseSync {
 
   mkdirSync(secretDir, { recursive: true });
 
-  console.log(`[memphis-secret] Creating vault: ${vaultPath}`);
+  console.error(`[memphis-secret] Creating vault: ${vaultPath}`);
 
   const database = new DatabaseSync(vaultPath);
 
@@ -39,7 +39,7 @@ function createVault(appDir?: string): DatabaseSync {
         PRAGMA user_version = ${SCHEMA_VERSION};
     `);
 
-  console.log(`[memphis-secret] Vault initialized: ${vaultPath}`);
+  console.error(`[memphis-secret] Vault initialized: ${vaultPath}`);
 
   return database;
 }
@@ -76,7 +76,7 @@ export function initializeVault(appDir?: string): void {
   const vaultPath = getVaultPath(appDir);
 
   if (existsSync(vaultPath)) {
-    console.log(`[memphis-secret] Vault already exists: ${vaultPath}`);
+    console.error(`[memphis-secret] Vault already exists: ${vaultPath}`);
     return;
   }
 
@@ -95,7 +95,7 @@ export function getCredential(
   const database = openVaultIfExists(appDir);
 
   if (!database) {
-    console.log(
+    console.error(
       `[memphis-secret] Vault does not exist: ${getVaultPath(appDir)}`,
     );
     return undefined;
@@ -113,7 +113,7 @@ export function getCredential(
       { encrypted_secret: Buffer } | undefined;
 
     if (!row) {
-      console.log(`[memphis-secret] Credential not found: ${service}/${item}`);
+      console.error(`[memphis-secret] Credential not found: ${service}/${item}`);
       return undefined;
     }
 
@@ -144,7 +144,7 @@ export function setCredential(
 
       statement.run(service, item, encryptedSecret);
 
-      console.log(`[memphis-secret] Credential stored: ${service}/${item}`);
+      console.error(`[memphis-secret] Credential stored: ${service}/${item}`);
       return;
     }
 
@@ -168,7 +168,7 @@ export function setCredential(
 
     statement.run(service, item, encryptedSecret);
 
-    console.log(`[memphis-secret] Credential stored: ${service}/${item}`);
+    console.error(`[memphis-secret] Credential stored: ${service}/${item}`);
   } finally {
     database.close();
   }
@@ -190,11 +190,11 @@ export function removeCredential(
     const result = statement.run(service, item);
 
     if (result.changes > 0) {
-      console.log(`[memphis-secret] Credential removed: ${service}/${item}`);
+      console.error(`[memphis-secret] Credential removed: ${service}/${item}`);
       return true;
     }
 
-    console.log(`[memphis-secret] Credential not found: ${service}/${item}`);
+    console.error(`[memphis-secret] Credential not found: ${service}/${item}`);
 
     return false;
   } finally {
@@ -222,7 +222,7 @@ export function listCredentials(appDir?: string): MemphisSecretItem[] {
       item: row.item,
     }));
 
-    console.log(
+    console.error(
       `[memphis-secret] Found ${credentials.length} credential${
         credentials.length === 1 ? "" : "s"
       }`,
