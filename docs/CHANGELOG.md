@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 
 The format is (read: strives to be) based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+---
+
+## [0.0.5] – 2026-10-9
+
+### Changed:
+
+- Enhance documentation in CLI help and README.
+
 ---
 
 ## [0.0.4] – 2026-10-9
