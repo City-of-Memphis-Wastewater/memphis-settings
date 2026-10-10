@@ -7,6 +7,7 @@ import { MemphisSecret } from "../memphis-secret/index.ts";
 
 type ParsedArgs = {
   appDir?: string;
+  dir?: string;
   emit: boolean;
   args: string[];
 };
@@ -27,7 +28,7 @@ function printHelp(): void {
   writeOut(`memphis-settings
 
 Usage:
-memphis-settings [--app-dir PATH] <manager> <command> [arguments]
+memphis-settings [--app-dir PATH] [--dir PATH] <manager> <command> [arguments]
 
 Managers:
 config    Manage plaintext configuration
@@ -60,7 +61,8 @@ env set KEY VALUE
 env delete KEY
 
 Options:
---app-dir PATH   Select the application directory
+--app-dir PATH   Select the application directory for config and secret
+--dir PATH       Select the directory containing .env
 --emit, -e       Emit a secret value to stdout
 --help, -h       Show help
 
@@ -74,25 +76,33 @@ memphis-settings secret get eds password --emit
 memphis-settings secret set eds password
 memphis-settings env list
 memphis-settings env set EDS_HOST 172.19.4.127
-memphis-settings --app-dir ./plantmap config list`);
+memphis-settings --app-dir ./plantmap config list
+memphis-settings --dir ./plantmap env list`);
 }
 
 function parseArgs(input: string[]): ParsedArgs {
   const args: string[] = [];
   let appDir: string | undefined;
+  let dir: string | undefined;
   let emit = false;
 
   for (let i = 0; i < input.length; i++) {
     const arg = input[i];
 
-    if (arg === "--app-dir") {
+    if (arg === "--app-dir" || arg === "--dir") {
+      const option = arg;
       const value = input[++i];
 
       if (!value || value.startsWith("--")) {
-        throw new Error("--app-dir requires a directory path.");
+        throw new Error(`${option} requires a directory path.`);
       }
 
-      appDir = value;
+      if (option === "--app-dir") {
+        appDir = value;
+      } else {
+        dir = value;
+      }
+
       continue;
     }
 
@@ -104,7 +114,7 @@ function parseArgs(input: string[]): ParsedArgs {
     args.push(arg);
   }
 
-  return { appDir, emit, args };
+  return { appDir, dir, emit, args };
 }
 
 function parseConfigValue(raw: string): unknown {
@@ -313,7 +323,7 @@ async function runEnv(env: MemphisEnv, args: string[]): Promise<void> {
         throw new Error(`Environment variable not found: ${key}`);
       }
 
-      writeOut(value);
+      writeOut(String(value));
       return;
     }
 
@@ -348,7 +358,7 @@ async function runEnv(env: MemphisEnv, args: string[]): Promise<void> {
 export async function runCli(input: string[]): Promise<void> {
   try {
     const parsed = parseArgs(input);
-    const { appDir, emit, args } = parsed;
+    const { appDir, dir, emit, args } = parsed;
 
     if (args.length === 0 || args[0] === "--help" || args[0] === "-h") {
       printHelp();
@@ -364,6 +374,14 @@ export async function runCli(input: string[]): Promise<void> {
 
     const [manager, ...managerArgs] = args;
 
+    if (manager === "env" && appDir !== undefined) {
+      throw new Error("Use --dir for env commands; --app-dir is for config and secret.");
+    }
+
+    if (manager !== "env" && dir !== undefined) {
+      throw new Error("--dir is only supported by env commands.");
+    }
+
     switch (manager) {
       case "config":
         await runConfig(new MemphisConfig({ appDir }), managerArgs);
@@ -374,7 +392,7 @@ export async function runCli(input: string[]): Promise<void> {
         return;
 
       case "env":
-        await runEnv(new MemphisEnv({ appDir }), managerArgs);
+        await runEnv(new MemphisEnv({ dir }), managerArgs);
         return;
 
       default:
