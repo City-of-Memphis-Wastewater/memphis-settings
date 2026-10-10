@@ -10,3 +10,7 @@ The format is (read: strives to be) based on [Keep a Changelog](https://keepacha
 ### Changed:
 
 - CLI now supports --dir flag for env sub command and --app-dir for secret and config sub commands.
+
+### Added:
+
+- Tests
