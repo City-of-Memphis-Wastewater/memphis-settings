@@ -33,7 +33,6 @@ const config = new MemphisConfig();
 
 This sets up the config file reference for `~/.memphis-config/values.json`.
 
-
 ```ts
 import { MemphisEnv } from "memphis-settings";
 const env = new MemphisEnv();
@@ -50,4 +49,3 @@ https://github.com/City-of-Memphis-Wastewater/memphis-settings
 ## npm package
 
 https://www.npmjs.com/package/memphis-settings
-

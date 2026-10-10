@@ -91,11 +91,7 @@ export class MemphisEnv {
   }
 
   private validateKey(key: string): void {
-    if (
-      typeof key !== "string" ||
-      key.trim() === "" ||
-      /[\r\n=]/.test(key)
-    ) {
+    if (typeof key !== "string" || key.trim() === "" || /[\r\n=]/.test(key)) {
       throw new Error("[memphis-env] Invalid environment variable name.");
     }
   }
@@ -112,4 +108,3 @@ export class MemphisEnv {
     writeFileSync(this.envFile, contents + "\n", "utf8");
   }
 }
-
