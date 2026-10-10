@@ -18,4 +18,34 @@ CRUD for .env file in package root.
 
 https://github.com/City-of-Memphis-Wastewater/memphis-settings
 
+## npm package
+
+https://www.npmjs.com/package/memphis-settings
+
 ---
+
+## Usage
+
+```ts
+import { MemphisSecret } from "memphis-settings";
+const secret = new MemphisSecret();
+secret.initializeVault();
+```
+
+This sets up the secret vault file reference for `~/.memphis-secret/vault.db`.
+
+```ts
+import { MemphisConfig } from "memphis-settings";
+const config = new MemphisConfig();
+```
+
+This sets up the config file reference for `~/.memphis-config/values.json`.
+
+
+```ts
+import { MemphisEnv } from "memphis-settings";
+const env = new MemphisEnv();
+```
+
+This sets up the `.env` file reference in the root directory, the current working directory.
+
