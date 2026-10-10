@@ -113,7 +113,9 @@ export function getCredential(
       { encrypted_secret: Buffer } | undefined;
 
     if (!row) {
-      console.error(`[memphis-secret] Credential not found: ${service}/${item}`);
+      console.error(
+        `[memphis-secret] Credential not found: ${service}/${item}`,
+      );
       return undefined;
     }
 

@@ -375,7 +375,9 @@ export async function runCli(input: string[]): Promise<void> {
     const [manager, ...managerArgs] = args;
 
     if (manager === "env" && appDir !== undefined) {
-      throw new Error("Use --dir for env commands; --app-dir is for config and secret.");
+      throw new Error(
+        "Use --dir for env commands; --app-dir is for config and secret.",
+      );
     }
 
     if (manager !== "env" && dir !== undefined) {
