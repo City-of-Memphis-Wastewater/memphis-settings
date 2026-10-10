@@ -4,6 +4,10 @@
   "description": "Manage encrypted secrets, plaintext configs, and .env settings locally.",
   "license": "ISC",
   "type": "module",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/City-of-Memphis-Wastewater/memphis-settings.git"
+    },
   "keywords": [
     "credential-management",
     "secret-management",
