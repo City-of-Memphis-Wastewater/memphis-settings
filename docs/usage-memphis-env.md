@@ -6,8 +6,11 @@
 import { MemphisEnv } from 'memphis-env';
 
 const env = new MemphisEnv({
-    appDir: '/path/to/application/local/dir'
+    dir: '/target/dir/'
 });
+```
+
+This .env file referenced is in the specified target dir. This is very different from how memphis-config and memphis-secret leverage the appDir argument.
 
 ## Standard usage for expected .env file
 
