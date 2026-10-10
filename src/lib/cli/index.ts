@@ -85,7 +85,9 @@ A nested hidden .memphis-config dir or .memphis-secret dir will be referened in 
 It is important to understand that 'memphis-settings --app-dir ~/.myapp config' references a file nested at '~/.myapp/.memphis-config/values.json'.
 In the same way 'memphis-settings --app-dir ~/.myapp secret' references a file nested at '~/.myapp/.memphis-secret/vault.db'.
 The intended home dir based design follows the ethos that it is not recommended that secret or config files to be used inside of development directories where library or app code is, to avoid the risk of accidental git tracking.
-`);
+
+
+As for .env files, that's your business. '--dir target env' means './target/.env'.`);
 }
 
 function parseArgs(input: string[]): ParsedArgs {
