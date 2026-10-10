@@ -14,14 +14,6 @@ Two-key plaintext local value store.
 
 CRUD for .env file in package root.
 
-## Source code
-
-https://github.com/City-of-Memphis-Wastewater/memphis-settings
-
-## npm package
-
-https://www.npmjs.com/package/memphis-settings
-
 ---
 
 ## Usage
@@ -48,4 +40,14 @@ const env = new MemphisEnv();
 ```
 
 This sets up the `.env` file reference in the root directory, the current working directory.
+
+---
+
+## Source code
+
+https://github.com/City-of-Memphis-Wastewater/memphis-settings
+
+## npm package
+
+https://www.npmjs.com/package/memphis-settings
 
