@@ -1,7 +1,9 @@
-export type EnvValue = string;
+// src/lib/memphis-env/types.ts
+
+export type EnvValue = string | number | boolean;
 
 export interface MemphisEnvOptions {
-  appDir?: string;
+  dir?: string;
 }
 
 export interface MemphisEnvSetOptions {

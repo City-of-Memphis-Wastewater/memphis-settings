@@ -14,7 +14,7 @@ export class MemphisEnv {
   private readonly values: Record<string, EnvValue> = {};
 
   constructor(options: MemphisEnvOptions = {}) {
-    const envDir = options.appDir ?? process.cwd();
+    const envDir = options.dir ?? process.cwd();
 
     this.envFile = path.join(envDir, ".env");
 
@@ -91,7 +91,11 @@ export class MemphisEnv {
   }
 
   private validateKey(key: string): void {
-    if (typeof key !== "string" || key.trim() === "" || /[\r\n=]/.test(key)) {
+    if (
+      typeof key !== "string" ||
+      key.trim() === "" ||
+      /[\r\n=]/.test(key)
+    ) {
       throw new Error("[memphis-env] Invalid environment variable name.");
     }
   }
@@ -108,3 +112,4 @@ export class MemphisEnv {
     writeFileSync(this.envFile, contents + "\n", "utf8");
   }
 }
+
