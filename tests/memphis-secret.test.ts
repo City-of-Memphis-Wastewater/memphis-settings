@@ -1,60 +1,53 @@
+import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import test from "node:test";
 
 import { MemphisSecret } from "../src/index.ts";
 
-const appDir = mkdtempSync(path.join(os.tmpdir(), "memphis-secret-"));
+test("MemphisSecret: initialization is explicit", (t) => {
+  const appDir = mkdtempSync(path.join(os.tmpdir(), "memphis-secret-test-"));
+  t.after(() => rmSync(appDir, { recursive: true, force: true }));
 
-console.log(`Test directory: ${appDir}`);
-
-try {
   const secret = new MemphisSecret({ appDir });
 
-  console.log("\n--- initialize ---");
+  assert.equal(secret.isInitialized(), false);
+
   secret.initializeVault();
 
-  console.log("\n--- set ---");
-  secret.setValue("ovation", "username", "clayton");
+  assert.equal(secret.isInitialized(), true);
+});
 
-  secret.setValue("ovation", "password", "super-secret");
+test("MemphisSecret: CRUD and overwrite behavior", (t) => {
+  const appDir = mkdtempSync(path.join(os.tmpdir(), "memphis-secret-test-"));
+  t.after(() => rmSync(appDir, { recursive: true, force: true }));
 
-  console.log("\n--- list ---");
-  console.log(secret.list());
+  const secret = new MemphisSecret({ appDir });
+  secret.initializeVault();
 
-  console.log("\n--- get ---");
-  console.log("username:", secret.value("ovation", "username"));
+  secret.setValue("eds", "username", "operator");
+  secret.setValue("eds", "password", "test-secret");
 
-  console.log("password:", secret.value("ovation", "password"));
+  assert.equal(secret.value("eds", "username"), "operator");
+  assert.equal(secret.value("eds", "password"), "test-secret");
 
-  console.log("\n--- overwrite false ---");
+  assert.deepEqual(secret.list(), [
+    { service: "eds", item: "password" },
+    { service: "eds", item: "username" },
+  ]);
 
-  try {
-    secret.setValue("ovation", "password", "different", { overwrite: false });
-  } catch (error) {
-    console.log(error instanceof Error ? error.message : error);
-  }
-
-  console.log("\n--- remove ---");
-
-  console.log("removed:", secret.remove("ovation", "password"));
-
-  console.log("password:", secret.value("ovation", "password"));
-
-  console.log("\n--- missing vault ---");
-
-  const missing = new MemphisSecret({
-    appDir: path.join(appDir, "missing"),
+  secret.setValue("eds", "password", "replacement", {
+    overwrite: false,
   });
+  assert.equal(secret.value("eds", "password"), "test-secret");
 
-  try {
-    missing.setValue("test", "value", "should fail");
-  } catch (error) {
-    console.log(error instanceof Error ? error.message : error);
-  }
-} finally {
-  rmSync(appDir, {
-    recursive: true,
-    force: true,
+  secret.setValue("eds", "password", "replacement", {
+    overwrite: true,
   });
-}
+  assert.equal(secret.value("eds", "password"), "replacement");
+
+  assert.equal(secret.remove("eds", "password"), true);
+  assert.equal(secret.value("eds", "password"), undefined);
+  assert.equal(secret.remove("eds", "password"), false);
+});
