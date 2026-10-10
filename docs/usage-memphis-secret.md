@@ -28,7 +28,7 @@ import { MemphisSecret } from "memphis-secret";
 const secret = new MemphisSecret();
 ```
 
-This sets up the secret vault file reference for `~/.memphis-secret/values.json`.
+This sets up the secret vault file reference for `~/.memphis-secret/vault.db`.
 
 ## Vault Initialization
 
