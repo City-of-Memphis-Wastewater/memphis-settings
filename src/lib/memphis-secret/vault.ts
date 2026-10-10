@@ -123,6 +123,8 @@ export function getCredential(
   }
 }
 
+//---
+
 export function setCredential(
   service: string,
   item: string,
@@ -135,38 +137,36 @@ export function setCredential(
   try {
     if (overwrite) {
       const statement = database.prepare(`
-                INSERT OR REPLACE INTO credentials
-                    (service, item, encrypted_secret)
-                VALUES (?, ?, ?)
-            `);
+        INSERT OR REPLACE INTO credentials
+          (service, item, encrypted_secret)
+        VALUES (?, ?, ?)
+      `);
 
       statement.run(service, item, encryptedSecret);
 
       console.log(`[memphis-secret] Credential stored: ${service}/${item}`);
+      return;
+    }
 
+    const existing = database.prepare(`
+      SELECT 1 FROM credentials
+      WHERE service = ? AND item = ?
+    `);
+
+    if (existing.get(service, item)) {
+      console.error(
+        `[memphis-secret] Credential already exists: ${service}/${item}`,
+      );
       return;
     }
 
     const statement = database.prepare(`
-            INSERT INTO credentials
-                (service, item, encrypted_secret)
-            VALUES (?, ?, ?)
-        `);
+      INSERT INTO credentials
+        (service, item, encrypted_secret)
+      VALUES (?, ?, ?)
+    `);
 
-    try {
-      statement.run(service, item, encryptedSecret);
-    } catch (error) {
-      if (error instanceof Error && error.message.includes("UNIQUE")) {
-        throw new Error(
-          `[memphis-secret] Credential already exists: ${service}/${item}`,
-          {
-            cause: error,
-          },
-        );
-      }
-
-      throw error;
-    }
+    statement.run(service, item, encryptedSecret);
 
     console.log(`[memphis-secret] Credential stored: ${service}/${item}`);
   } finally {
