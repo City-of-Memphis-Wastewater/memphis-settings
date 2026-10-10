@@ -10,6 +10,7 @@
     "configuration",
     "credentials",
     "environment",
+    "env",
     "local",
     "disk",
     "commit-safety",
