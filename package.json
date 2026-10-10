@@ -6,7 +6,7 @@
   "type": "module",
   "repository": {
       "type": "git",
-      "url": "https://github.com/City-of-Memphis-Wastewater/memphis-settings.git"
+      "url": "git+https://github.com/City-of-Memphis-Wastewater/memphis-settings.git"
     },
   "keywords": [
     "credential-management",
