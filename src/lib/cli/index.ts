@@ -69,15 +69,15 @@ Options:
 Examples:
 memphis-settings config list
 memphis-settings config get eds host
-memphis-settings config set eds host 172.19.4.127
+memphis-settings config set eds host 123.4.56.789
 memphis-settings secret init
 memphis-settings secret get eds password
 memphis-settings secret get eds password --emit
 memphis-settings secret set eds password
 memphis-settings env list
-memphis-settings env set EDS_HOST 172.19.4.127
-memphis-settings --app-dir ./plantmap config list
-memphis-settings --dir ./plantmap env list`);
+memphis-settings env set EDS_HOST 123.45.6.789
+memphis-settings --app-dir ~/.plantmap-sv config list
+memphis-settings --dir ~/.plantmap-sv env list`);
 }
 
 function parseArgs(input: string[]): ParsedArgs {
