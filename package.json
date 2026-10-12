@@ -5,9 +5,9 @@
   "license": "ISC",
   "type": "module",
   "repository": {
-      "type": "git",
-      "url": "git+https://github.com/City-of-Memphis-Wastewater/memphis-settings.git"
-    },
+    "type": "git",
+    "url": "git+https://github.com/City-of-Memphis-Wastewater/memphis-settings.git"
+  },
   "keywords": [
     "credential-management",
     "secret-management",
