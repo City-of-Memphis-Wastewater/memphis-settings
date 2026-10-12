@@ -79,28 +79,29 @@ memphis-settings env set EDS_HOST 123.45.6.789
 memphis-settings --app-dir ~/.plantmap-sv config list
 memphis-settings --dir ../plantmap-sv env list
 
-Note that config and secret bootstrap library functions 
-take a name like 'myapp' and associate it with a 
+Insight: 
+Note that config and secret bootstrap library functions, 
+bootstrapMemphisConfig() and bootstrapMemphisSecret(),
+take an optional 'appName' argument like 'myapp' and associate it with a 
 local app dir like '~/.myapp'.
 
-Ergo, when using the --app-dir flag, that while 
-the --app-dir can be any dir, usage like '--app-dir ~/.myapp', 
-based in the home directory, is expected.
+Ergo, for the --app-dir flag, usage like '--app-dir ~/.myapp', 
+with a hidden folder in the home directory, is expected, 
+but not enforced.
 
 A nested hidden .memphis-config dir or .memphis-secret dir 
-will be referened in the --app-dir specified.
+will be referenced in the --app-dir specified.
 
 It is important to understand that 
 'memphis-settings --app-dir ~/.myapp config' references a file 
-nested at '~/.myapp/.memphis-config/values.json'
-.
+nested at '~/.myapp/.memphis-config/values.json'.
 In the same way 'memphis-settings --app-dir ~/.myapp secret' 
 references a file nested at '~/.myapp/.memphis-secret/vault.db'.
 
-The intended home dir based design follows the ethos that 
-it is not recommended that secret or config files to be used inside 
-of development directories where library or app code is, 
-to avoid the risk of accidental git tracking.
+It is not recommended that secret or config files 
+be placed inside of the related source code directory, 
+to avoid the risk of accidental git tracking and upload, 
+as is common with .env files.
 
 
 As for .env files, that's your business. 
