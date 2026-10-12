@@ -6,6 +6,22 @@ The format is (read: strives to be) based on [Keep a Changelog](https://keepacha
 
 ---
 
+## [0.0.6] – 2026-10-12
+
+### Added:
+
+- Add CLI help svg script and asset, with reference in README.
+- Documentation regarding asymmetry between .env default placement and directory argument behavior, versus nested appDir argument behavior.
+
+### Changed:
+
+- Consolidated bootstrap functions into centralized src/bootstrap.ts.
+- Change bootstrap function references in src/index.ts.
+- Remove old bootstrap.ts files like src/lib/memphis-env/bootstrap.ts, etc.
+
+
+---
+
 ## [0.0.5] – 2026-10-9
 
 ### Changed:
