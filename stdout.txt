@@ -1,1 +1,76 @@
-[memphis-secret] Vault does not exist: /data/data/com.termux/files/home/.memphis-secret/vault.db
+memphis-settings
+
+Usage:
+memphis-settings [--app-dir PATH] [--dir PATH] <manager> <command> [arguments]
+
+Managers:
+config    Manage plaintext configuration
+secret    Manage encrypted credentials
+env       Manage .env variables
+
+Config commands:
+config list
+config get SERVICE ITEM
+config set SERVICE ITEM VALUE
+config delete SERVICE ITEM
+
+Secret commands:
+secret init
+secret list
+secret get SERVICE ITEM [--emit]
+secret set SERVICE ITEM
+secret delete SERVICE ITEM
+
+Env commands:
+env list
+env get KEY
+env set KEY VALUE
+env delete KEY
+
+Options:
+--app-dir PATH   Select the application directory for nested config and secret
+--dir PATH       Select the directory containing .env
+--emit, -e       Emit a secret value to stdout
+--help, -h       Show help
+
+Examples:
+memphis-settings config list
+memphis-settings config get eds host
+memphis-settings config set eds host 123.4.56.789
+memphis-settings secret init
+memphis-settings secret get eds password
+memphis-settings secret get eds password --emit
+memphis-settings secret set eds password
+memphis-settings env list
+memphis-settings env set EDS_HOST 123.45.6.789
+memphis-settings --app-dir ~/.plantmap-sv config list
+memphis-settings --dir ../plantmap-sv env list
+
+Insight: 
+Note that config and secret bootstrap library functions, 
+bootstrapMemphisConfig() and bootstrapMemphisSecret(),
+take an optional 'appName' argument like 'myapp' and associate it with a 
+local app dir like '~/.myapp'.
+
+Ergo, for the --app-dir flag, usage like '--app-dir ~/.myapp', 
+pointed at a hidden folder in the home directory, is expected, 
+but not enforced.
+
+A nested hidden .memphis-config dir or .memphis-secret dir 
+will be referenced in the --app-dir specified.
+
+It is important to understand that 
+'memphis-settings --app-dir ~/.myapp config' references a file 
+nested at '~/.myapp/.memphis-config/values.json'.
+In the same way 'memphis-settings --app-dir ~/.myapp secret' 
+references a file nested at '~/.myapp/.memphis-secret/vault.db'.
+
+It is recommended that secret or config files 
+be placed within hidden folders in the user home,
+rather than in the related source code directory, 
+to avoid the risk of accidental git tracking and upload, 
+as is common with .env files.
+
+
+As for .env files, that's your business. 
+'--dir target env' means './target/.env'.
