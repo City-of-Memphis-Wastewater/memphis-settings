@@ -28,6 +28,14 @@ export class MemphisSecret {
    * By default, the vault is stored under the user's home
    * directory. An application-specific directory can be
    * supplied when the application needs its own secret store.
+   *
+   * "appDir" is the base directory; ".memphis-secret/" is appended
+   * to determine where the vault and encryption key are stored.
+   *
+   * For example, "appDir: "~/.myapp" stores the vault.db and .key files
+   * in "~/.myapp/.memphis-secret/". If omitted, "appDir" defaults
+   * to the user's home directory, storing files in
+   * "~/.memphis-secret/".
    */
   constructor(options: MemphisSecretOptions = {}) {
     this.appDir = options.appDir ?? os.homedir();
