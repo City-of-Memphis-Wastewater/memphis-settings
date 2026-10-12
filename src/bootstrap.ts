@@ -40,11 +40,11 @@ export function bootstrapMemphisSecret(appName: string): MemphisSecret {
 
 /* The standard approach is for .env to be in root.
 Ergo, the function signature for bootstrapMemphisEnv() is asymmetric from the other bootstrap functions.
-
+If dir = process.cwd() was not explicitly identified here, it would be the fallback behavior anyways.
 */
 
 export function bootstrapMemphisEnv(
-  options: MemphisEnvOptions = { dir = process.cwd() },
+  options: MemphisEnvOptions = { dir: process.cwd() },
 ): MemphisEnv {
   return new MemphisEnv(options);
 }
