@@ -19,7 +19,6 @@ The format is (read: strives to be) based on [Keep a Changelog](https://keepacha
 - Change bootstrap function references in src/index.ts.
 - Remove old bootstrap.ts files like src/lib/memphis-env/bootstrap.ts, etc.
 
-
 ---
 
 ## [0.0.5] – 2026-10-9
