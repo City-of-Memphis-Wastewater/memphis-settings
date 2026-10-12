@@ -23,6 +23,8 @@ export type {
   SecretValue,
 } from "./lib/memphis-secret/types.ts";
 
-export { bootstrapMemphisConfig } from "./lib/memphis-config/bootstrap.ts";
-export { bootstrapMemphisEnv } from "./lib/memphis-env/bootstrap.ts";
-export { bootstrapMemphisSecret } from "./lib/memphis-secret/bootstrap.ts";
+export {
+  bootstrapMemphisConfig,
+  bootstrapMemphisEnv,
+  bootstrapMemphisSecret,
+} from "./bootstrap.ts";

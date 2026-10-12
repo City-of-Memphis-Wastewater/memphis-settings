@@ -35,12 +35,6 @@ config    Manage plaintext configuration
 secret    Manage encrypted credentials
 env       Manage .env variables
 
-Commands:
-list
-get KEY
-set KEY VALUE
-delete KEY
-
 Config commands:
 config list
 config get SERVICE ITEM
@@ -86,7 +80,7 @@ take an optional 'appName' argument like 'myapp' and associate it with a
 local app dir like '~/.myapp'.
 
 Ergo, for the --app-dir flag, usage like '--app-dir ~/.myapp', 
-with a hidden folder in the home directory, is expected, 
+pointed at a hidden folder in the home directory, is expected, 
 but not enforced.
 
 A nested hidden .memphis-config dir or .memphis-secret dir 
@@ -98,8 +92,9 @@ nested at '~/.myapp/.memphis-config/values.json'.
 In the same way 'memphis-settings --app-dir ~/.myapp secret' 
 references a file nested at '~/.myapp/.memphis-secret/vault.db'.
 
-It is not recommended that secret or config files 
-be placed inside of the related source code directory, 
+It is recommended that secret or config files 
+be placed within hidden folders in the user home,
+rather than in the related source code directory, 
 to avoid the risk of accidental git tracking and upload, 
 as is common with .env files.
 
