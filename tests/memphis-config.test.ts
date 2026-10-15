@@ -33,7 +33,7 @@ test("MemphisConfig: CRUD and overwrite behavior", (t) => {
   });
   assert.equal(config.value("eds", "host"), "192.168.1.10");
 
-  assert.equal(config.deleteValue("eds", "port"), true);
+  assert.equal(config.remove("eds", "port"), true);
   assert.equal(config.value("eds", "port"), undefined);
-  assert.equal(config.deleteValue("eds", "port"), false);
+  assert.equal(config.remove("eds", "port"), false);
 });

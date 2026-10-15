@@ -35,9 +35,9 @@ test("MemphisEnv: CRUD, overwrite behavior, and persistence", (t) => {
   });
   assert.equal(env.value("TEST_HOST"), "192.168.1.10");
 
-  assert.equal(env.deleteValue("TEST_PORT"), true);
+  assert.equal(env.remove("TEST_PORT"), true);
   assert.equal(env.value("TEST_PORT"), undefined);
-  assert.equal(env.deleteValue("TEST_PORT"), false);
+  assert.equal(env.remove("TEST_PORT"), false);
 
   const contents = readFileSync(path.join(dir, ".env"), "utf8");
 
