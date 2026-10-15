@@ -4,7 +4,7 @@ Manage encrypted secrets, plain-text configs, and .env settings locally.
 
 ## memphis-secret
 
-Two-key encrypted AES-256 local value store.
+Two-key encrypted AES-256-GCM local value store.
 
 ## memphis-config
 
