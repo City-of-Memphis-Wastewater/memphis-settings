@@ -14,18 +14,23 @@ export function isLinux(): boolean {
 }
 
 export function isAndroid(): boolean {
-  return process.env.ANDROID_ROOT !== undefined ||
-    process.env.ANDROID_DATA !== undefined;
+  return (
+    process.env.ANDROID_ROOT !== undefined ||
+    process.env.ANDROID_DATA !== undefined
+  );
 }
 
 export function isTermux(): boolean {
-  return isAndroid() &&
-    process.env.PREFIX?.startsWith("/data/data/com.termux/") === true;
+  return (
+    isAndroid() &&
+    process.env.PREFIX?.startsWith("/data/data/com.termux/") === true
+  );
 }
 
 export function isWSL(): boolean {
-  return isLinux() &&
+  return (
+    isLinux() &&
     (process.env.WSL_DISTRO_NAME !== undefined ||
-      os.release().toLowerCase().includes("microsoft"));
+      os.release().toLowerCase().includes("microsoft"))
+  );
 }
-

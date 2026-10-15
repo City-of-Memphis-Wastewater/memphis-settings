@@ -14,14 +14,10 @@ function createTempDir(): string {
   return dir;
 }
 
-function runCli(args: string[], home: string, cwd: string) {
+function runCli(args: string[], cwd: string) {
   return spawnSync(process.execPath, [cliPath, ...args], {
     cwd,
     encoding: "utf8",
-    env: {
-      ...process.env,
-      HOME: home,
-    },
   });
 }
 
@@ -38,7 +34,6 @@ describe("memphis-settings CLI", () => {
 
     const result = runCli(
       ["--app-dir", appDir, "config", "set", "test", "key", "value"],
-      createTempDir(),
       cwd,
     );
 
@@ -46,33 +41,16 @@ describe("memphis-settings CLI", () => {
     assert.equal(result.status, 0, result.stderr);
 
     const configPath = path.join(appDir, ".memphis-config", "values.json");
-
     const saved = JSON.parse(readFileSync(configPath, "utf8"));
-    assert.equal(saved.test.key, "value");
-  });
 
-    const configPath = path.join(
-      home,
-      ".fixture",
-      ".memphis-config",
-      "values.json",
-    );
-    console.log("CLI stdout:", result.stdout);
-    console.log("CLI stderr:", result.stderr);
-    console.log("CLI status:", result.status);
-    console.log("Expected config:", configPath);
-    console.log("Home:", home);
-
-    const saved = JSON.parse(readFileSync(configPath, "utf8"));
     assert.equal(saved.test.key, "value");
   });
 
   it("returns a nonzero exit code for an unknown manager", () => {
-    const home = createTempDir();
     const cwd = createTempDir();
+    const result = runCli(["unknown"], cwd);
 
-    const result = runCli(["unknown"], home, cwd);
-
+    assert.equal(result.error, undefined);
     assert.notEqual(result.status, 0);
     assert.ok(result.stderr.includes("Unknown manager"));
   });

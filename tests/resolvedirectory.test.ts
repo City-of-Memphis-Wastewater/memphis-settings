@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 
 import { resolveDirectory } from "../src/helpers.ts";
+import { isWindows } from "../src/platforms.ts";
 
 describe("resolveDirectory", () => {
   const home = os.homedir();
@@ -16,12 +17,14 @@ describe("resolveDirectory", () => {
     assert.equal(resolveDirectory("~/.myapp"), path.resolve(home, ".myapp"));
   });
 
-  it("expands a Windows-style tilde-prefixed path", () => {
-    assert.equal(
-      resolveDirectory(String.raw`~\.myapp`),
-      path.resolve(home, ".myapp"),
-    );
-  });
+  if (isWindows()) {
+    it("expands a Windows-style tilde-prefixed path", () => {
+      assert.equal(
+        resolveDirectory(String.raw`~\.myapp`),
+        path.resolve(home, ".myapp"),
+      );
+    });
+  }
 
   it("resolves relative paths against the working directory", () => {
     assert.equal(
@@ -39,7 +42,6 @@ describe("resolveDirectory", () => {
 
   it("preserves absolute paths", () => {
     const absolutePath = path.resolve(os.tmpdir(), "myapp");
-
     assert.equal(resolveDirectory(absolutePath), absolutePath);
   });
 });
