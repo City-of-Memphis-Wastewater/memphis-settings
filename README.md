@@ -54,7 +54,7 @@ const host = config.getValue("eds", "host");
 const values = config.list();
 
 // Delete
-config.deleteValue("eds", "port");
+config.remove("eds", "port");
 ```
 
 This sets up the config file reference for `~/.memphis-config/values.json`.
@@ -74,7 +74,7 @@ const host = env.getValue("EDS_HOST");
 const values = env.list();
 
 // Delete
-env.deleteValue("EDS_PORT");
+env.remove("EDS_PORT");
 ```
 
 This sets up the `.env` file reference in the root directory, the current working directory.

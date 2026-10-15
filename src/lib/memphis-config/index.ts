@@ -127,7 +127,7 @@ export class MemphisConfig {
     );
   }
 
-  public deleteValue(service: string, item: string): boolean {
+  public remove(service: string, item: string): boolean {
     this.validateNames(service, item);
 
     const serviceValues = this.values[service];

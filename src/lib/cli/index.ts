@@ -201,7 +201,7 @@ async function runConfig(config: MemphisConfig, args: string[]): Promise<void> {
 
       const [service, item] = rest;
 
-      if (!config.deleteValue(service, item)) {
+      if (!config.remove(service, item)) {
         throw new Error(`Configuration not found: ${service}/${item}`);
       }
 
@@ -367,7 +367,7 @@ async function runEnv(env: MemphisEnv, args: string[]): Promise<void> {
 
       const [key] = rest;
 
-      if (!env.deleteValue(key)) {
+      if (!env.remove(key)) {
         throw new Error(`Environment variable not found: ${key}`);
       }
 

@@ -79,7 +79,7 @@ export class MemphisEnv {
     this.save();
   }
 
-  public deleteValue(key: string): boolean {
+  public remove(key: string): boolean {
     this.validateKey(key);
 
     if (!Object.hasOwn(this.values, key)) {
