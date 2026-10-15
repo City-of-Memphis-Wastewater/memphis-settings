@@ -32,6 +32,25 @@ afterEach(() => {
 });
 
 describe("memphis-settings CLI", () => {
+  it("writes config under an explicit app directory", () => {
+    const appDir = createTempDir();
+    const cwd = createTempDir();
+
+    const result = runCli(
+      ["--app-dir", appDir, "config", "set", "test", "key", "value"],
+      createTempDir(),
+      cwd,
+    );
+
+    assert.equal(result.error, undefined);
+    assert.equal(result.status, 0, result.stderr);
+
+    const configPath = path.join(appDir, ".memphis-config", "values.json");
+
+    const saved = JSON.parse(readFileSync(configPath, "utf8"));
+    assert.equal(saved.test.key, "value");
+  });
+
   it("writes config under a tilde-prefixed app directory", () => {
     const home = createTempDir();
     const cwd = createTempDir();
@@ -51,6 +70,11 @@ describe("memphis-settings CLI", () => {
       ".memphis-config",
       "values.json",
     );
+    console.log("CLI stdout:", result.stdout);
+    console.log("CLI stderr:", result.stderr);
+    console.log("CLI status:", result.status);
+    console.log("Expected config:", configPath);
+    console.log("Home:", home);
 
     const saved = JSON.parse(readFileSync(configPath, "utf8"));
     assert.equal(saved.test.key, "value");

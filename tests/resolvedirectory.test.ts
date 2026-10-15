@@ -17,7 +17,10 @@ describe("resolveDirectory", () => {
   });
 
   it("expands a Windows-style tilde-prefixed path", () => {
-    assert.equal(resolveDirectory("~\.myapp"), path.resolve(home, ".myapp"));
+    assert.equal(
+      resolveDirectory(String.raw`~\.myapp`),
+      path.resolve(home, ".myapp"),
+    );
   });
 
   it("resolves relative paths against the working directory", () => {
