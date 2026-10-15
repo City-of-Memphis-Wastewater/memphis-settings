@@ -46,7 +46,7 @@ describe("memphis-settings CLI", () => {
     );
     assert.equal(result.error, undefined);
     assert.equal(result.status, 0);
-    
+
     const configPath = path.join(
       home,
       ".fixture",
@@ -56,7 +56,6 @@ describe("memphis-settings CLI", () => {
 
     const saved = JSON.parse(readFileSync(configPath, "utf8"));
     assert.equal(saved.test.key, "value");
-    
   });
 
   it("returns a nonzero exit code for an unknown manager", () => {
@@ -66,7 +65,7 @@ describe("memphis-settings CLI", () => {
     const result = runCli(["unknown"], home, cwd);
 
     assert.notEqual(result.status, 0);
-    
+
     assert.equal(saved.test.key, "value");
     expect(result.stderr).toContain("Unknown manager");
     assert.ok(result.stderr.includes("Unknown manager"));

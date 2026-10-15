@@ -23,7 +23,7 @@ describe("MemphisConfig directory resolution", () => {
 
       const saved = JSON.parse(readFileSync(configPath, "utf8"));
 
-      expect(saved.test.key).toBe("value");
+      assert.equal(saved.test.key, "value");
     } finally {
       rmSync(tempHome, { recursive: true, force: true });
     }

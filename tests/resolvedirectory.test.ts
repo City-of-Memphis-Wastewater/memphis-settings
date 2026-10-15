@@ -9,25 +9,27 @@ describe("resolveDirectory", () => {
   const home = os.homedir();
 
   it("expands a tilde by itself", () => {
-    expect(resolveDirectory("~")).toBe(path.resolve(home));
+    assert.equal(resolveDirectory("~"), path.resolve(home));
   });
 
   it("expands a tilde-prefixed path", () => {
-    expect(resolveDirectory("~/.myapp")).toBe(path.resolve(home, ".myapp"));
+    assert.equal(resolveDirectory("~/.myapp"), path.resolve(home, ".myapp"));
   });
 
   it("expands a Windows-style tilde-prefixed path", () => {
-    expect(resolveDirectory("~\\.myapp")).toBe(path.resolve(home, ".myapp"));
+    assert.equal(resolveDirectory("~\.myapp"), path.resolve(home, ".myapp"));
   });
 
   it("resolves relative paths against the working directory", () => {
-    expect(resolveDirectory("./config")).toBe(
+    assert.equal(
+      resolveDirectory("./config"),
       path.resolve(process.cwd(), "config"),
     );
   });
 
   it("resolves parent-directory references", () => {
-    expect(resolveDirectory("../config")).toBe(
+    assert.equal(
+      resolveDirectory("../config"),
       path.resolve(process.cwd(), "../config"),
     );
   });
@@ -35,6 +37,6 @@ describe("resolveDirectory", () => {
   it("preserves absolute paths", () => {
     const absolutePath = path.resolve(os.tmpdir(), "myapp");
 
-    expect(resolveDirectory(absolutePath)).toBe(absolutePath);
+    assert.equal(resolveDirectory(absolutePath), absolutePath);
   });
 });
