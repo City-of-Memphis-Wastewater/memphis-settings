@@ -6,6 +6,16 @@ The format is (read: strives to be) based on [Keep a Changelog](https://keepacha
 
 ---
 
+## [0.0.7] – 2026-10-15
+
+### Added:
+
+- Path resolution applied to all dir inputs in class constructors.
+- More tests, for path resolution, namely for tildes.
+- src/platforms.ts, namely for onWindows, to keep tests platform aware.
+
+---
+
 ## [0.0.6] – 2026-10-12
 
 ### Added:
