@@ -1,4 +1,4 @@
-import { describe, it } from "node:test";
+import { afterEach, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
@@ -6,13 +6,10 @@ import os from "node:os";
 import path from "node:path";
 
 const tempDirs: string[] = [];
-
-// Replace this with the actual CLI executable path from package.json.
 const cliPath = path.resolve("bin/memphis-settings.js");
 
 function createTempDir(): string {
   const dir = mkdtempSync(path.join(os.tmpdir(), "memphis-cli-test-"));
-
   tempDirs.push(dir);
   return dir;
 }
@@ -44,8 +41,9 @@ describe("memphis-settings CLI", () => {
       home,
       cwd,
     );
+
     assert.equal(result.error, undefined);
-    assert.equal(result.status, 0);
+    assert.equal(result.status, 0, result.stderr);
 
     const configPath = path.join(
       home,
@@ -65,9 +63,6 @@ describe("memphis-settings CLI", () => {
     const result = runCli(["unknown"], home, cwd);
 
     assert.notEqual(result.status, 0);
-
-    assert.equal(saved.test.key, "value");
-    expect(result.stderr).toContain("Unknown manager");
     assert.ok(result.stderr.includes("Unknown manager"));
   });
 });

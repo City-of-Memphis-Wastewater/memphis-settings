@@ -6,7 +6,7 @@ export function resolveDirectory(input: string): string {
     input === "~"
       ? os.homedir()
       : input.startsWith("~/") || input.startsWith("~\\")
-        ? path.join(os.homedir(), input.slice(2))
+        ? path.join(os.homedir(), input.slice(2).replace(/\\/g, path.sep))
         : input;
 
   return path.resolve(expanded);
