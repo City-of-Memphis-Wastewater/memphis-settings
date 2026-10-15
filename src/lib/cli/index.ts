@@ -5,6 +5,8 @@ import { MemphisConfig } from "../memphis-config/index.ts";
 import { MemphisEnv } from "../memphis-env/index.ts";
 import { MemphisSecret } from "../memphis-secret/index.ts";
 
+import { resolveDirectory } from "../../helpers.ts";
+
 type ParsedArgs = {
   appDir?: string;
   dir?: string;
@@ -121,9 +123,9 @@ function parseArgs(input: string[]): ParsedArgs {
       }
 
       if (option === "--app-dir") {
-        appDir = value;
+        appDir = resolveDirectory(value);
       } else {
-        dir = value;
+        dir = resolveDirectory(value);
       }
 
       continue;

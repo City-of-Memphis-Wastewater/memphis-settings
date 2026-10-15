@@ -3,6 +3,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
+import { resolveDirectory } from "../../helpers.ts";
+
 import type {
   EnvValue,
   MemphisEnvOptions,
@@ -14,7 +16,7 @@ export class MemphisEnv {
   private readonly values: Record<string, EnvValue> = {};
 
   constructor(options: MemphisEnvOptions = {}) {
-    const envDir = options.dir ?? process.cwd();
+    const envDir = resolveDirectory(options.dir ?? process.cwd());
 
     this.envFile = path.join(envDir, ".env");
 
