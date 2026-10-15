@@ -1,6 +1,7 @@
 // src/lib/memphis-secret/lib/index.ts
 
 import os from "node:os";
+import { resolveDirectory } from "../../helpers.ts";
 
 import { decrypt, encrypt, initializeKey } from "./crypto.ts";
 import {
@@ -38,7 +39,7 @@ export class MemphisSecret {
    * "~/.memphis-secret/".
    */
   constructor(options: MemphisSecretOptions = {}) {
-    this.appDir = options.appDir ?? os.homedir();
+    this.appDir = resolveDirectory(options.appDir ?? os.homedir());
   }
 
   /**
