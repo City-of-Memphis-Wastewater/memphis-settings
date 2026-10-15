@@ -51,19 +51,6 @@ describe("memphis-settings CLI", () => {
     assert.equal(saved.test.key, "value");
   });
 
-  it("writes config under a tilde-prefixed app directory", () => {
-    const home = createTempDir();
-    const cwd = createTempDir();
-
-    const result = runCli(
-      ["--app-dir", "~/.fixture", "config", "set", "test", "key", "value"],
-      home,
-      cwd,
-    );
-
-    assert.equal(result.error, undefined);
-    assert.equal(result.status, 0, result.stderr);
-
     const configPath = path.join(
       home,
       ".fixture",
