@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import os from "node:os";
 import path from "node:path";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
@@ -18,11 +19,7 @@ describe("MemphisConfig directory resolution", () => {
 
       config.setValue("test", "key", "value", { overwrite: true });
 
-      const configPath = path.join(
-        appDir,
-        ".memphis-config",
-        "values.json",
-      );
+      const configPath = path.join(appDir, ".memphis-config", "values.json");
 
       const saved = JSON.parse(readFileSync(configPath, "utf8"));
 

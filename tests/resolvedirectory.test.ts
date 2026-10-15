@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import os from "node:os";
 import path from "node:path";
 
@@ -12,15 +13,11 @@ describe("resolveDirectory", () => {
   });
 
   it("expands a tilde-prefixed path", () => {
-    expect(resolveDirectory("~/.myapp")).toBe(
-      path.resolve(home, ".myapp"),
-    );
+    expect(resolveDirectory("~/.myapp")).toBe(path.resolve(home, ".myapp"));
   });
 
   it("expands a Windows-style tilde-prefixed path", () => {
-    expect(resolveDirectory("~\\.myapp")).toBe(
-      path.resolve(home, ".myapp"),
-    );
+    expect(resolveDirectory("~\\.myapp")).toBe(path.resolve(home, ".myapp"));
   });
 
   it("resolves relative paths against the working directory", () => {
