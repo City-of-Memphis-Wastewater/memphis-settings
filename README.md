@@ -22,6 +22,19 @@ CRUD for .env file in package root.
 import { MemphisSecret } from "memphis-settings";
 const secret = new MemphisSecret();
 secret.initializeVault();
+
+// Set (recommended in CLI, not scripts)
+secret.setValue("eds", "username", "test");
+secret.setValue("eds", "password", "secret");
+
+// Get
+const username = secret.getValue("eds", "username");
+
+// List
+const credentials = secret.list();
+
+// Remove
+secret.remove("eds", "password");
 ```
 
 This sets up the secret vault file reference for `~/.memphis-secret/vault.db`.
@@ -29,6 +42,19 @@ This sets up the secret vault file reference for `~/.memphis-secret/vault.db`.
 ```ts
 import { MemphisConfig } from "memphis-settings";
 const config = new MemphisConfig();
+
+// Set
+config.setValue("eds", "host", "192.168.1.10");
+config.setValue("eds", "port", 43080);
+
+// Get
+const host = config.getValue("eds", "host");
+
+// List
+const values = config.list();
+
+// Delete
+config.deleteValue("eds", "port");
 ```
 
 This sets up the config file reference for `~/.memphis-config/values.json`.
@@ -36,6 +62,19 @@ This sets up the config file reference for `~/.memphis-config/values.json`.
 ```ts
 import { MemphisEnv } from "memphis-settings";
 const env = new MemphisEnv();
+
+// Set
+env.setValue("EDS_HOST", "192.168.1.10");
+env.setValue("EDS_PORT", "43080");
+
+// Get
+const host = env.getValue("EDS_HOST");
+
+// List
+const values = env.list();
+
+// Delete
+env.deleteValue("EDS_PORT");
 ```
 
 This sets up the `.env` file reference in the root directory, the current working directory.
