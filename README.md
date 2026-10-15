@@ -87,7 +87,7 @@ This sets up the `.env` file reference in the root directory, the current workin
 Call the CLI like this:
 
 ```
-npx memphis-settings --help
+npx memphis-settings help
 ```
 
 Help
