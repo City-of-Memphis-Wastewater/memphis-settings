@@ -53,7 +53,7 @@ npx memphis-settings --help
 Help
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/City-of-Memphis-Wastewater/memphis-settings/main/assets/memphis-settings-help-v0.0.6.svg" style="width: 100%; max-width: 850px;" alt="SVG help" />
+  <img src="https://raw.githubusercontent.com/City-of-Memphis-Wastewater/memphis-settings/main/assets/memphis-settings-help-v0.0.7.svg" style="width: 100%; max-width: 850px;" alt="SVG help" />
 </p>
 
 ---
