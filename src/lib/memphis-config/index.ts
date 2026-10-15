@@ -3,6 +3,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { resolveDirectory } from "../../helpers.ts";
 
 import type {
   ConfigValue,
@@ -16,9 +17,8 @@ export class MemphisConfig {
   private readonly values: Record<string, ConfigValue> = {};
 
   constructor(options: MemphisConfigOptions = {}) {
-    const configDir = options.appDir
-      ? path.join(options.appDir, ".memphis-config")
-      : path.join(os.homedir(), ".memphis-config");
+    const appDir = resolveDirectory(options.appDir ?? os.homedir());
+    const configDir = path.join(appDir, ".memphis-config");
 
     this.configFile = path.join(configDir, "values.json");
 
