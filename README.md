@@ -37,7 +37,8 @@ const credentials = secret.list();
 secret.remove("eds", "password");
 ```
 
-This sets up the secret vault file reference for `~/.memphis-secret/vault.db`.
+This sets up the secret vault file reference for the default `~/.memphis-secret/vault.db`.
+There is a `.key` file in the same directory. If you delete that key, your stored secrets are unrecoverable.
 
 ```ts
 import { MemphisConfig } from "memphis-settings";
@@ -57,7 +58,7 @@ const values = config.list();
 config.remove("eds", "port");
 ```
 
-This sets up the config file reference for `~/.memphis-config/values.json`.
+This sets up the config file reference for the default `~/.memphis-config/values.json`.
 
 ```ts
 import { MemphisEnv } from "memphis-settings";
@@ -104,3 +105,4 @@ https://github.com/City-of-Memphis-Wastewater/memphis-settings
 ## npm package
 
 https://www.npmjs.com/package/memphis-settings
+
