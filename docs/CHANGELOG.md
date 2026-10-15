@@ -14,6 +14,10 @@ The format is (read: strives to be) based on [Keep a Changelog](https://keepacha
 - More tests, for path resolution, namely for tildes.
 - src/platforms.ts, namely for onWindows, to keep tests platform aware.
 
+### Changed:
+
+- Change deleteValue() to remove() for config and env.
+
 ---
 
 ## [0.0.6] – 2026-10-12
