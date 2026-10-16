@@ -57,6 +57,18 @@ export class MemphisEnv {
     return Object.hasOwn(this.values, key) ? this.values[key] : undefined;
   }
 
+  public requiredValue(key: string): string {
+    const value = this.value(key);
+
+    if (value === undefined || String(value).trim() === "") {
+      throw new Error(
+        `[memphis-env] Required environment value "${key}" is missing or empty.`,
+      );
+    }
+
+    return String(value);
+  }
+
   public list(): Array<{ key: string; value: EnvValue }> {
     return Object.entries(this.values).map(([key, value]) => ({
       key,

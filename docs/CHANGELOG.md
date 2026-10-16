@@ -6,6 +6,14 @@ The format is (read: strives to be) based on [Keep a Changelog](https://keepacha
 
 ---
 
+## [0.0.8] – 2026-10-15
+
+### Added:
+
+- MemphisEnv.requiredValue(), restored, which had been lost in a refactor.
+
+---
+
 ## [0.0.7] – 2026-10-15
 
 ### Added:
